@@ -73,8 +73,9 @@ export default defineComponent({
       try {
         const response = await fetch(url); 
         const filmsData = await response.json(); 
-        this.films = [...this.films, ...filmsData.results];
-        this.filmsUrl = filmsData.next; 
+        // this.films = [...this.films, ...filmsData.results];
+        // this.filmsUrl = filmsData.next; 
+        this.films = filmsData.results;
       } catch (error) {
         console.error("Error fetching films:", error);
       } 
