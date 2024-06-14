@@ -1,0 +1,41 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+    background-color: black;
+    color: white
+}
+body {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+}
+  
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    font-weight: 700;
+    color: #01FEFE;
+    text-shadow:
+    0 0 10px #1501ed,
+    0 0 20px #1501ed,
+    0 0 30px #1501ed,
+    0 0 40px #1501ed,
+    0 0 70px #1501ed,
+    0 0 80px #1501ed,
+    0 0 100px #1501ed,
+    0 0 150px #1501ed;
+}
+
+nav a {
+    font-weight: 800;
+}
+
+nav a.router-link-exact-active {
+    color: #fcd34d;
+}
