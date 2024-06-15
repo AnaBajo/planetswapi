@@ -2,7 +2,7 @@
   <div v-if="planet" class="container flex items-center justify-center my-6 mx-auto">
     <div class="max-w-xs md:max-w-screen-lg">
       <table class="text-left align-top table-auto border border-yellow-400">
-        <tbody >
+        <!-- <tbody >
           <tr v-for="(value, key) in planet" :key="key" class=" border-b border-yellow-300">
             <td class="text-lg align-top font-semibold p-4">{{ capitalizeKey(key) }}</td>
             <td class="p-4 ">
@@ -24,7 +24,10 @@
               </div>
             </td>
           </tr>
-        </tbody>
+        </tbody> -->
+       <div>
+        {{ planet }}
+       </div>
       </table>
       <button 
       @click="goBack" 
@@ -37,18 +40,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { Planet, Film, Resident } from '@/types';
 
 export default defineComponent({
+  props: {
+    planet: {
+      type: Object as PropType<Planet>,
+      required: true,
+    },
+  },
   data() {
     return {
-      planet: null as Planet | null,
+      // planet: null as Planet | null,
     };
   },
   async mounted() {
-    this.fetchPlanet();
-    // try {
+    console.log('Planet received in PlanetDetails:', this.planet);
+    // this.fetchPlanet();
+  },
+  methods: {
+    // async fetchPlanet() {
+    //   try {
     //   const planetIdParam = this.$route.params.id as string;
     //   // const planetName = this.$route.params.name;
     //   // const planetId = Array.isArray(planetIdParam) ? planetIdParam[0] : planetIdParam;
@@ -85,47 +98,7 @@ export default defineComponent({
     // } catch (error) {
     //   console.error('Error fetching planet data:', error);
     // }
-  },
-  methods: {
-    async fetchPlanet() {
-      try {
-      const planetIdParam = this.$route.params.id as string;
-      // const planetName = this.$route.params.name;
-      // const planetId = Array.isArray(planetIdParam) ? planetIdParam[0] : planetIdParam;
-      const idNr = parseInt(planetIdParam, 10);
-
-      const url = `https://swapi.dev/api/planets/${idNr}/`;
-      const response = await fetch(url);
-      const planetData = await response.json();
-
-      if (planetData) {
-        const films = await this.fetchFilms(planetData.films);
-        const residents = await this.fetchResidents(planetData.residents);
-
-        this.planet = {
-          // id: idNr,
-          name: planetData.name,
-          rotation_period: planetData.rotation_period,
-          orbital_period: planetData.orbital_period,
-          diameter: planetData.diameter,
-          climate: planetData.climate,
-          gravity: planetData.gravity,
-          terrain: planetData.terrain,
-          surface_water: planetData.surface_water,
-          residents: residents,
-          population: planetData.population,
-          films: films,
-          created: planetData.created,
-          edited: planetData.edited,
-          url: planetData.url
-        };
-      } else {
-        console.error('Planet data is not available');
-      }
-    } catch (error) {
-      console.error('Error fetching planet data:', error);
-    }
-    },
+    // },
     async fetchFilms(filmUrls: string[]): Promise<Film[]> {
       const filmPromises = filmUrls.map(async (url) => {
         const response = await fetch(url);

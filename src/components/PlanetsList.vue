@@ -12,8 +12,8 @@
           <tr v-for="planet in planets" :key="planet.name" class="text-left align-top border border-yellow-400 "> 
             <td class="p-4 font-semibold" >
               <router-link
-                :to="{ name: 'planet-details', params: { id: planet.id } }">
-                {{ planet.name }}
+                :to="{ name: 'planet-details', params: { id: planet.id } }" @click="selectPlanet(planet)">
+                {{ planet.name }} 
               </router-link>
             </td>
             <td class="p-4">
@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { PlanetsArray } from '@/types';
+import { PlanetsArray, Planet } from '@/types';
 
 // const filmsUrl = "https://swapi.dev/api/films/"
 
@@ -64,8 +64,18 @@ export default defineComponent({
       type: Boolean,
       required: true
     }
+  },
+  // methods: {
+  //   selectPlanet(planet: Planet, event: Event) {
+  //     event.preventDefault();
+  //     this.$emit('select-planet', planet);
+  //   }
+  // }
+  methods: {
+    selectPlanet(planet: Planet) {
+      this.$emit('select-planet', planet);
+    }
   }
-
   // data() {
   //   return {
   //     planetsUrl: "https://swapi.dev/api/planets/",

@@ -2,18 +2,18 @@
   <div>
     <planets-list 
         :planets="planetsWithFilms"
+        @show-planet-details="showPlanetDetails"
         :fetchNextPage="fetchNextPage"
         :planetsUrl="planetsUrl"
-        :loading="loading"
-    />
-    <!-- <planet-details /> -->
+        :loading="loading" />
+    <planet-details :planet="selectedPlanet" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import PlanetsList from "@/components/PlanetsList.vue";
-// import PlanetDetails from "@/components/PlanetDetails.vue";
+import PlanetDetails from "@/components/PlanetDetails.vue";
 import { Planet, Film, PlanetsArray } from "@/types";
 
 const filmsUrl = "https://swapi.dev/api/films/";
@@ -22,7 +22,7 @@ export default defineComponent({
   name: "PlanetsManager",
   components: {
     PlanetsList,
-    // PlanetDetails,
+    PlanetDetails,
   },
   data() {
     return {
@@ -31,6 +31,7 @@ export default defineComponent({
       planets: [] as Planet[],
       films: [] as Film[],
       planetsWithFilms: [] as PlanetsArray,
+      selectedPlanet: {} as Planet,
     };
   },
   mounted() {
@@ -51,8 +52,6 @@ export default defineComponent({
       try {
         const response = await fetch(url);
         const filmsData = await response.json();
-        // this.films = [...this.films, ...filmsData.results];
-        // this.filmsUrl = filmsData.next;
         this.films = filmsData.results;
       } catch (error) {
         console.error("Error fetching films:", error);
@@ -63,7 +62,6 @@ export default defineComponent({
         this.loading = true;
         await this.fetchPlanets(this.planetsUrl);
         await this.fetchFilms(filmsUrl);
-        // console.log(this.planets);
 
         const planetsWithFilms = this.planets.map((planet, index) => {
           const associatedFilms = this.films
@@ -72,11 +70,7 @@ export default defineComponent({
               return {
                 title: film.title,
               };
-            });            
-        //   const id = parseInt(
-        //     planet.url.split("/").filter(Boolean).pop() || `${index}`,
-        //     10
-        //   );
+            });
           return {
             id: parseInt(planet.url.split("/").filter(Boolean).pop() || `${index}`, 10),
             name: planet.name,
@@ -106,6 +100,10 @@ export default defineComponent({
       if (this.planetsUrl) {
         this.fetchData();
       }
+    },
+    showPlanetDetails(planet: Planet) {
+      this.selectedPlanet = planet;
+      console.log(this.selectedPlanet); 
     },
   },
 });
