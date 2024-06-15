@@ -19,12 +19,12 @@ const routes: Array<RouteRecordRaw> = [
     // component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
-    path: '/planet/:name',
-    // path: '/planet/:id',
+    // path: '/planet/:name',
+    path: '/planet/:id',
     name: 'planet-details',
     component: PlanetDetailsVue,
     props: true
-  }
+  },
 ]
 
 const router = createRouter({

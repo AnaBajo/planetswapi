@@ -14,6 +14,7 @@ export interface Resident {
 
 
 export interface Planet {
+  id?: number;
   name: string;
   rotation_period?: string; 
   orbital_period?: string; 
@@ -32,6 +33,7 @@ export interface Planet {
 
 
 export interface PlanetWithFilms {
+  id: number,
   name: string;
   films: { title: string }[];
 }

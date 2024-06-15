@@ -12,7 +12,7 @@
           <tr v-for="planet in planetsWithFilms" :key="planet.name" class="text-left align-top border border-yellow-400 "> 
             <td class="p-4 font-semibold" >
               <router-link
-                :to="{ name: 'planet-details', params: { name: planet.name } }">
+                :to="{ name: 'planet-details', params: { id: planet.id } }">
                 {{ planet.name }}
               </router-link>
             </td>
@@ -84,10 +84,8 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.fetchPlanets(this.planetsUrl);
-        await this.fetchFilms(this.filmsUrl);
-        // console.log(this.planets);
-        
-        const planetsWithFilms = this.planets.map((planet) => { 
+        await this.fetchFilms(this.filmsUrl);        
+        const planetsWithFilms = this.planets.map((planet, index) => { 
           const associatedFilms = this.films
           
           .filter((film) => film.planets.includes(planet.url))
@@ -98,13 +96,15 @@ export default defineComponent({
             }
           });
           // console.log(associatedFilms);
+          const id = parseInt(planet.url.split('/').filter(Boolean).pop() || `${index}`, 10);
           return {
+            id,
             name: planet.name, 
             films: associatedFilms,
           };
         });
-        this.planetsWithFilms = planetsWithFilms 
-        // console.log(this.PlanetWithFilms);
+        this.planetsWithFilms = planetsWithFilms;
+        console.log(this.planetsWithFilms); 
         
       } catch (error) {
         console.error("Error fetching planetsWithFilms:", error);

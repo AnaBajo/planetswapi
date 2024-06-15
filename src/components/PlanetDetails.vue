@@ -36,50 +36,33 @@
   </div>
 </template>
 
-  
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Planet, Film, Resident } from '@/types';
-
-
-//   interface Film {
-//   title: string;
-// }
-
-// interface Planet {
-//   name: string;
-//   climate: string;
-//   diameter: string;
-//   gravity: string;
-//   orbital_period: string;
-//   population: string;
-//   rotation_period: string;
-//   surface_water: string;
-//   terrain: string;
-//   films: Film[];
-//   created: string;
-//   edited: string;
-// }
+import { defineComponent } from 'vue';
+import { Planet, Film, Resident } from '@/types';
 
 export default defineComponent({
-    data() {
-      return {
-        planet: null as Planet | null,
-      };
-    },
-    async mounted() {
+  data() {
+    return {
+      planet: null as Planet | null,
+    };
+  },
+  async mounted() {
     try {
-      const planetName = this.$route.params.name;
-      const url = `https://swapi.dev/api/planets/?search=${planetName}`;
+      const planetIdParam = this.$route.params.id as string;
+      // const planetName = this.$route.params.name;
+      // const planetId = Array.isArray(planetIdParam) ? planetIdParam[0] : planetIdParam;
+      const idNr = parseInt(planetIdParam, 10);
+
+      const url = `https://swapi.dev/api/planets/${idNr}/`;
       const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.results.length > 0) {
-        const planetData = data.results[0];
+      const planetData = await response.json();
+
+      if (planetData) {
         const films = await this.fetchFilms(planetData.films);
-        const residents = await this.fetchResidents(planetData.residents)
-        
+        const residents = await this.fetchResidents(planetData.residents);
+
         this.planet = {
+          // id: idNr,
           name: planetData.name,
           rotation_period: planetData.rotation_period,
           orbital_period: planetData.orbital_period,
@@ -95,49 +78,48 @@ export default defineComponent({
           edited: planetData.edited,
           url: planetData.url
         };
+      } else {
+        console.error('Planet data is not available');
       }
-      } catch (error) {
-        console.error('Error fetching planet data:', error);
-      }
-    },
-    methods: {
-      formatDate(value: string) {
-        return new Intl.DateTimeFormat('en-US').format(new Date(value));
-      },
-      capitalizeKey(key: string) {
-        return key
-          .split('_')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-      },
-      async fetchFilms(filmUrls: string[]): Promise<Film[]> {
-        const filmPromises = filmUrls.map(async (url) => {
-          const response = await fetch(url);
-          const filmsData = await response.json();
-          // return { title: filmsData.title };
-          return {
-            title: filmsData.title,
-            planets: filmsData.planets,
-            url: filmsData.url,
-        };
-        });
-        return await Promise.all(filmPromises);
-      },
-      async fetchResidents(residentUrls: string[]): Promise<Resident[]> {
-        const residentPromises = residentUrls.map(async (url) => {
-          const response = await fetch(url);
-          const residentsData = await response.json();
-          return {
-            name: residentsData.name,
-            // url: data.url,
-          };
-        });
-        return await Promise.all(residentPromises);
-      },
-      goBack() {
-        this.$router.go(-1);
+    } catch (error) {
+      console.error('Error fetching planet data:', error);
     }
+  },
+  methods: {
+    formatDate(value: string) {
+      return new Intl.DateTimeFormat('en-US').format(new Date(value));
     },
-    
-  });
-  </script> 
+    capitalizeKey(key: string) {
+      return key
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    },
+    async fetchFilms(filmUrls: string[]): Promise<Film[]> {
+      const filmPromises = filmUrls.map(async (url) => {
+        const response = await fetch(url);
+        const filmsData = await response.json();
+        return {
+          title: filmsData.title,
+          planets: filmsData.planets,
+          url: filmsData.url,
+        };
+      });
+      return await Promise.all(filmPromises);
+    },
+    async fetchResidents(residentUrls: string[]): Promise<Resident[]> {
+      const residentPromises = residentUrls.map(async (url) => {
+        const response = await fetch(url);
+        const residentsData = await response.json();
+        return {
+          name: residentsData.name,
+        };
+      });
+      return await Promise.all(residentPromises);
+    },
+    goBack() {
+      this.$router.go(-1);
+    }
+  },
+});
+</script>
