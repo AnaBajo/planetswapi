@@ -47,6 +47,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { PlanetsArray, Planet } from '@/types';
+import { eventBus } from '@/eventBus';
 
 export default defineComponent({
   props: {
@@ -69,8 +70,11 @@ export default defineComponent({
   },
   methods: {
     selectPlanet(planet: Planet) {
-      this.$emit('show-planet-details', planet);
-      console.log('PlanetList/selectPlanet()/EMITTING', planet); 
+      // this.$emit('show-planet-details', planet);
+      // console.log('PlanetList/selectPlanet()/EMITTING', planet); 
+      eventBus.emit('planetSelected', planet);
+      console.log('PlanetList/selectPlanet()/eventBus', planet);
+      
     },
 
   }

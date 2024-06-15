@@ -1,5 +1,5 @@
 <template>
-  <div v-if="planet" class="container flex items-center justify-center my-6 mx-auto">
+  <div v-if="selectedPlanet" class="container flex items-center justify-center my-6 mx-auto">
     <div class="max-w-xs md:max-w-screen-lg">
       <!-- <table class="text-left align-top table-auto border border-yellow-400">
         <tbody >
@@ -32,7 +32,19 @@
 
 
       <div>
-        {{ planet.name }}
+        {{ selectedPlanet.name }}
+      </div>
+      <div>
+        {{ selectedPlanet.id }}
+      </div>
+      <div>
+        {{ selectedPlanet.rotation_period }}
+      </div>
+      <div>
+        {{ selectedPlanet.gravity }}
+      </div>
+      <div>
+        {{ selectedPlanet.diameter }}
       </div>
       <button 
         @click="goBack" 
@@ -47,16 +59,21 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { Planet } from '@/types';
+import { eventBus } from '@/eventBus'; 
 
 export default defineComponent({
-  props: {
-    planet: {
-      type: Object as PropType<Planet>,
-      required: true,
-    },
+  data() {
+    return {
+      selectedPlanet: null as Planet | null,
+    };
   },
   mounted() {
-    console.log('PlanetDetails/mounted()/Planet received in PlanetDetails/this.planet:', this.planet);
+    // Listen for the 'planetSelected' event
+    eventBus.on('planetSelected', (planet: Planet) => {
+      this.selectedPlanet = planet;
+    });
+    console.log('PlanetDetails/mounted()/this.planetSelected', this.selectedPlanet);
+    
   },
   methods: {
     goBack() {

@@ -1,21 +1,24 @@
 <template>
   <div>
+    <h2>hello</h2>
     <planets-list
       :planets="planetsWithFilms"
-      @show-planet-details="showPlanetDetails"
       :fetchNextPage="fetchNextPage"
       :planetsUrl="planetsUrl"
       :loading="loading"
-    />
-    <planet-details :planet="selectedPlanet" v-if="selectedPlanet" />
+      />
+      <!-- @show-planet-details="showPlanetDetails" -->
+      <planet-details />
+    <!-- <planet-details :selectedPlanet="selectedPlanet" v-if="selectedPlanet" /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import PlanetsList from "@/components/PlanetsList.vue";
 import PlanetDetails from "@/components/PlanetDetails.vue";
 import { Planet, Film, PlanetsArray } from "@/types";
+import { eventBus } from "@/eventBus";
 
 const filmsUrl = "https://swapi.dev/api/films/";
 
@@ -32,11 +35,22 @@ export default defineComponent({
       planets: [] as Planet[],
       films: [] as Film[],
       planetsWithFilms: [] as PlanetsArray,
-      selectedPlanet: null as Planet | null,
+      //   selectedPlanet: null as Planet | null,
     };
   },
   mounted() {
     this.fetchData();
+
+    // Listen for the 'planetSelected' event
+    //   eventBus.on("planetSelected", (planet: Planet) => {
+    //   this.selectedPlanet = planet;
+    // });
+  },
+  computed: {
+    selectedPlanet(): Planet | null {
+      // Return the selected planet if available
+      return this.$refs.planetDetails ? (this.$refs.planetDetails as any).selectedPlanet : null;
+    }
   },
   methods: {
     async fetchPlanets(url: string) {
@@ -106,10 +120,13 @@ export default defineComponent({
       }
     },
     showPlanetDetails(planet: Planet) {
-    console.log('PlanetsManager/shoqPlanetDetails()/planet', planet);
-    this.selectedPlanet = planet;
-    console.log('PlanetsManager/shoqPlanetDetails()/this.selectedPlanet', this.selectedPlanet);
-    console.log('typeof planet', typeof planet);
+      console.log("PlanetsManager/shoqPlanetDetails()/planet", planet);
+      this.selectedPlanet = planet;
+      console.log(
+        "PlanetsManager/shoqPlanetDetails()/this.selectedPlanet",
+        this.selectedPlanet
+      );
+      console.log("typeof planet", typeof planet);
     },
   },
 });
