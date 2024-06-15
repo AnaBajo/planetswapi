@@ -1,12 +1,13 @@
 <template>
   <div>
-    <planets-list 
-        :planets="planetsWithFilms"
-        @show-planet-details="showPlanetDetails"
-        :fetchNextPage="fetchNextPage"
-        :planetsUrl="planetsUrl"
-        :loading="loading" />
-    <planet-details :planet="selectedPlanet" />
+    <planets-list
+      :planets="planetsWithFilms"
+      @show-planet-details="showPlanetDetails"
+      :fetchNextPage="fetchNextPage"
+      :planetsUrl="planetsUrl"
+      :loading="loading"
+    />
+    <planet-details :planet="selectedPlanet" v-if="selectedPlanet" />
   </div>
 </template>
 
@@ -31,7 +32,7 @@ export default defineComponent({
       planets: [] as Planet[],
       films: [] as Film[],
       planetsWithFilms: [] as PlanetsArray,
-      selectedPlanet: {} as Planet,
+      selectedPlanet: null as Planet | null,
     };
   },
   mounted() {
@@ -72,7 +73,10 @@ export default defineComponent({
               };
             });
           return {
-            id: parseInt(planet.url.split("/").filter(Boolean).pop() || `${index}`, 10),
+            id: parseInt(
+              planet.url.split("/").filter(Boolean).pop() || `${index}`,
+              10
+            ),
             name: planet.name,
             films: associatedFilms,
             rotation_period: planet.rotation_period,
@@ -102,8 +106,10 @@ export default defineComponent({
       }
     },
     showPlanetDetails(planet: Planet) {
-      this.selectedPlanet = planet;
-      console.log(this.selectedPlanet); 
+    console.log('PlanetsManager/shoqPlanetDetails()/planet', planet);
+    this.selectedPlanet = planet;
+    console.log('PlanetsManager/shoqPlanetDetails()/this.selectedPlanet', this.selectedPlanet);
+    console.log('typeof planet', typeof planet);
     },
   },
 });
