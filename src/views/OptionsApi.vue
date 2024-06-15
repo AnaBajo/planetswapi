@@ -1,19 +1,20 @@
 <template>
   <div>
-    <planets-component />
-    <!-- <planets-component-composition /> -->
-    <old-planets-component />
+    <planets-manager />
+    <!-- <planets-list /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import PlanetsComponent from '@/components/PlanetsComponent.vue'
+// import PlanetsList from '@/components/PlanetsList.vue'
+import PlanetsManager from '@/components/PlanetsManager.vue'
 
 export default defineComponent({
   name: 'OptionsApi',
   components: {
-    PlanetsComponent
+    // PlanetsList
+    PlanetsManager
   },
 });
 </script>

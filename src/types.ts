@@ -31,9 +31,11 @@ export interface Planet {
   url: string;
 }
 
+export type PlanetsArray = Planet[];
 
-export interface PlanetWithFilms {
-  id: number,
-  name: string;
-  films: { title: string }[];
-}
+// export interface PlanetWithFilms {
+//   id: number,
+//   name: string;
+//   films: { title: string }[];
+// }
+

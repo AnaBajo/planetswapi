@@ -47,7 +47,48 @@ export default defineComponent({
     };
   },
   async mounted() {
-    try {
+    this.fetchPlanet();
+    // try {
+    //   const planetIdParam = this.$route.params.id as string;
+    //   // const planetName = this.$route.params.name;
+    //   // const planetId = Array.isArray(planetIdParam) ? planetIdParam[0] : planetIdParam;
+    //   const idNr = parseInt(planetIdParam, 10);
+
+    //   const url = `https://swapi.dev/api/planets/${idNr}/`;
+    //   const response = await fetch(url);
+    //   const planetData = await response.json();
+
+    //   if (planetData) {
+    //     const films = await this.fetchFilms(planetData.films);
+    //     const residents = await this.fetchResidents(planetData.residents);
+
+    //     this.planet = {
+    //       // id: idNr,
+    //       name: planetData.name,
+    //       rotation_period: planetData.rotation_period,
+    //       orbital_period: planetData.orbital_period,
+    //       diameter: planetData.diameter,
+    //       climate: planetData.climate,
+    //       gravity: planetData.gravity,
+    //       terrain: planetData.terrain,
+    //       surface_water: planetData.surface_water,
+    //       residents: residents,
+    //       population: planetData.population,
+    //       films: films,
+    //       created: planetData.created,
+    //       edited: planetData.edited,
+    //       url: planetData.url
+    //     };
+    //   } else {
+    //     console.error('Planet data is not available');
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching planet data:', error);
+    // }
+  },
+  methods: {
+    async fetchPlanet() {
+      try {
       const planetIdParam = this.$route.params.id as string;
       // const planetName = this.$route.params.name;
       // const planetId = Array.isArray(planetIdParam) ? planetIdParam[0] : planetIdParam;
@@ -84,8 +125,7 @@ export default defineComponent({
     } catch (error) {
       console.error('Error fetching planet data:', error);
     }
-  },
-  methods: {
+    },
     async fetchFilms(filmUrls: string[]): Promise<Film[]> {
       const filmPromises = filmUrls.map(async (url) => {
         const response = await fetch(url);
