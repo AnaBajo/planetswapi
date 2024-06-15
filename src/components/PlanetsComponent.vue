@@ -44,11 +44,13 @@
 import { defineComponent } from 'vue';
 import { Planet, Film, PlanetWithFilms } from '@/types';
 
-export default defineComponent({
+const filmsUrl = "https://swapi.dev/api/films/"
+
+export default defineComponent({  
   data() {
     return {
       planetsUrl: "https://swapi.dev/api/planets/",
-      filmsUrl: "https://swapi.dev/api/films/",
+      // filmsUrl: "https://swapi.dev/api/films/",
       loading: false,
       planets: [] as Planet[],
       films: [] as Film[],
@@ -84,18 +86,17 @@ export default defineComponent({
       try {
         this.loading = true;
         await this.fetchPlanets(this.planetsUrl);
-        await this.fetchFilms(this.filmsUrl);        
+        await this.fetchFilms(filmsUrl);
+        // console.log(this.planets);
+        
         const planetsWithFilms = this.planets.map((planet, index) => { 
           const associatedFilms = this.films
-          
           .filter((film) => film.planets.includes(planet.url))
           .map((film) => {
-            
             return {
               title: film.title 
             }
           });
-          // console.log(associatedFilms);
           const id = parseInt(planet.url.split('/').filter(Boolean).pop() || `${index}`, 10);
           return {
             id,
@@ -104,8 +105,7 @@ export default defineComponent({
           };
         });
         this.planetsWithFilms = planetsWithFilms;
-        console.log(this.planetsWithFilms); 
-        
+        console.log(this.planetsWithFilms);         
       } catch (error) {
         console.error("Error fetching planetsWithFilms:", error);
       } finally {

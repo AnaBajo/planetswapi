@@ -86,15 +86,6 @@ export default defineComponent({
     }
   },
   methods: {
-    formatDate(value: string) {
-      return new Intl.DateTimeFormat('en-US').format(new Date(value));
-    },
-    capitalizeKey(key: string) {
-      return key
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    },
     async fetchFilms(filmUrls: string[]): Promise<Film[]> {
       const filmPromises = filmUrls.map(async (url) => {
         const response = await fetch(url);
@@ -116,6 +107,15 @@ export default defineComponent({
         };
       });
       return await Promise.all(residentPromises);
+    },
+    formatDate(value: string) {
+      return new Intl.DateTimeFormat('en-US').format(new Date(value));
+    },
+    capitalizeKey(key: string) {
+      return key
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
     },
     goBack() {
       this.$router.go(-1);
