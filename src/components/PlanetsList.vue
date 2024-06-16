@@ -9,17 +9,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="planet in planets" :key="planet.name" class="text-left align-top border border-yellow-400">
+          <tr
+            v-for="planet in planets"
+            :key="planet.name"
+            class="text-left align-top border border-yellow-400"
+          >
             <td class="p-4 font-semibold">
-              <!-- <a @click="selectPlanet(planet)" >
-                {{ planet.name }}
-              </a> -->
               <div @click="selectPlanet(planet)">
                 <router-link
-                  :to="{ name: 'planet-details', params: { id: planet.id } }" @click="selectPlanet(planet)">
-                  {{ planet.name }} 
-                </router-link>       
-              </div> 
+                  :to="{ name: 'planet-details', params: { id: planet.id } }"
+                  @click="selectPlanet(planet)"
+                >
+                  {{ planet.name }}
+                </router-link>
+              </div>
             </td>
             <td class="p-4">
               <ul>
@@ -31,11 +34,10 @@
           </tr>
         </tbody>
       </table>
-      <button 
-        class="bg-black text-yellow-400 border border-yellow-400 rounded-xl px-4 py-2 mt-4
-        hover:bg-yellow-400 hover:text-black transition duration-300"
-        v-if="planetsUrl" 
-        @click="fetchNextPage" 
+      <button
+        class="bg-black text-yellow-400 border border-yellow-400 rounded-xl px-4 py-2 mt-4 hover:bg-yellow-400 hover:text-black transition duration-300"
+        v-if="planetsUrl"
+        @click="fetchNextPage"
         :disabled="loading"
       >
         Load more
@@ -43,40 +45,34 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { PlanetsArray, Planet } from '@/types';
-import { eventBus } from '@/eventBus';
+import { defineComponent, PropType } from "vue";
+import { PlanetsArray, Planet } from "@/types";
+import { eventBus } from "@/eventBus";
 
 export default defineComponent({
   props: {
     planets: {
       type: Array as () => PlanetsArray,
-      required: true
+      required: true,
     },
     fetchNextPage: {
       type: Function as PropType<() => void>,
-      required: true
+      required: true,
     },
     planetsUrl: {
       type: String,
-      required: true
+      required: true,
     },
     loading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     selectPlanet(planet: Planet) {
-      // this.$emit('show-planet-details', planet);
-      // console.log('PlanetList/selectPlanet()/EMITTING', planet); 
-      eventBus.emit('planetSelected', planet);
-      console.log('PlanetList/selectPlanet()/eventBus', planet);
-      
+      eventBus.emit("planetSelected", planet);
     },
-
-  }
+  },
 });
 </script>

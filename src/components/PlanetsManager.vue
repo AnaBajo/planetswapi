@@ -1,24 +1,19 @@
 <template>
   <div>
-    <h2>hello</h2>
     <planets-list
-      :planets="planetsWithFilms"
+      :planets="PlanetsWithAllData"
       :fetchNextPage="fetchNextPage"
       :planetsUrl="planetsUrl"
       :loading="loading"
-      />
-      <!-- @show-planet-details="showPlanetDetails" -->
-      <planet-details />
-    <!-- <planet-details :selectedPlanet="selectedPlanet" v-if="selectedPlanet" /> -->
+    />
+    <planet-details />
   </div>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import PlanetsList from "@/components/PlanetsList.vue";
 import PlanetDetails from "@/components/PlanetDetails.vue";
-import { Planet, Film, PlanetsArray } from "@/types";
-import { eventBus } from "@/eventBus";
+import { Planet, Film, PlanetsArray, Resident } from "@/types";
 
 const filmsUrl = "https://swapi.dev/api/films/";
 
@@ -34,30 +29,29 @@ export default defineComponent({
       loading: false,
       planets: [] as Planet[],
       films: [] as Film[],
-      planetsWithFilms: [] as PlanetsArray,
-      //   selectedPlanet: null as Planet | null,
+      PlanetsWithAllData: [] as PlanetsArray,
     };
   },
   mounted() {
     this.fetchData();
-
-    // Listen for the 'planetSelected' event
-    //   eventBus.on("planetSelected", (planet: Planet) => {
-    //   this.selectedPlanet = planet;
-    // });
   },
   computed: {
     selectedPlanet(): Planet | null {
-      // Return the selected planet if available
-      return this.$refs.planetDetails ? (this.$refs.planetDetails as any).selectedPlanet : null;
-    }
+      return this.$refs.planetDetails
+        ? (this.$refs.planetDetails as any).selectedPlanet
+        : null;
+    },
   },
   methods: {
     async fetchPlanets(url: string) {
       try {
         const response = await fetch(url);
         const planetsData = await response.json();
-        this.planets = [...this.planets, ...planetsData.results];
+        const planets = planetsData.results.map((planet: any) => ({
+          ...planet,
+          residentUrls: planet.residents,
+        }));
+        this.planets = [...this.planets, ...planets];
         this.planetsUrl = planetsData.next;
       } catch (error) {
         console.error("Error fetching planets:", error);
@@ -72,42 +66,58 @@ export default defineComponent({
         console.error("Error fetching films:", error);
       }
     },
+    async fetchResidents(residentUrls: string[]): Promise<Resident[]> {
+      const residentPromises = residentUrls.map(async (url) => {
+        const response = await fetch(url);
+        const residentData = await response.json();
+        return {
+          name: residentData.name,
+        } as Resident;
+      });
+
+      return await Promise.all(residentPromises);
+    },
     async fetchData() {
       try {
         this.loading = true;
         await this.fetchPlanets(this.planetsUrl);
         await this.fetchFilms(filmsUrl);
 
-        const planetsWithFilms = this.planets.map((planet, index) => {
-          const associatedFilms = this.films
-            .filter((film) => film.planets.includes(planet.url))
-            .map((film) => {
-              return {
-                title: film.title,
-              };
-            });
-          return {
-            id: parseInt(
-              planet.url.split("/").filter(Boolean).pop() || `${index}`,
-              10
-            ),
-            name: planet.name,
-            films: associatedFilms,
-            rotation_period: planet.rotation_period,
-            orbital_period: planet.orbital_period,
-            diameter: planet.diameter,
-            climate: planet.climate,
-            gravity: planet.gravity,
-            terrain: planet.terrain,
-            surface_water: planet.surface_water,
-            population: planet.population,
-            residents: planet.residents,
-            created: planet.created,
-            edited: planet.edited,
-            url: planet.url,
-          } as Planet;
-        });
-        this.planetsWithFilms = planetsWithFilms;
+        const planetsWithAllData = await Promise.all(
+          this.planets.map(async (planet, index) => {
+            const associatedFilms = this.films
+              .filter((film) => film.planets.includes(planet.url))
+              .map((film) => {
+                return {
+                  title: film.title,
+                };
+              });
+            const associatedResidents = await this.fetchResidents(
+              planet.residentUrls
+            );
+            return {
+              id: parseInt(
+                planet.url.split("/").filter(Boolean).pop() || `${index}`,
+                10
+              ),
+              name: planet.name,
+              films: associatedFilms,
+              rotation_period: planet.rotation_period,
+              orbital_period: planet.orbital_period,
+              diameter: planet.diameter,
+              climate: planet.climate,
+              gravity: planet.gravity,
+              terrain: planet.terrain,
+              surface_water: planet.surface_water,
+              population: planet.population,
+              residents: associatedResidents,
+              created: planet.created,
+              edited: planet.edited,
+              url: planet.url,
+            } as Planet;
+          })
+        );
+        this.PlanetsWithAllData = planetsWithAllData;
       } catch (error) {
         console.error("Error fetching planetsWithFilms:", error);
       } finally {

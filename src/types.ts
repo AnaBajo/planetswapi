@@ -8,8 +8,6 @@ export interface Film {
 
 export interface Resident {
   name: string;
-  // planets: string[]; 
-  // url: string;
 }
 
 
@@ -25,6 +23,7 @@ export interface Planet {
   surface_water?: string; 
   population?: string; 
   residents?: Resident[];
+  residentUrls: string[];  
   films?: Film[]; 
   created?: string; 
   edited?: string; 
@@ -32,10 +31,3 @@ export interface Planet {
 }
 
 export type PlanetsArray = Planet[];
-
-// export interface PlanetWithFilms {
-//   id: number,
-//   name: string;
-//   films: { title: string }[];
-// }
-
