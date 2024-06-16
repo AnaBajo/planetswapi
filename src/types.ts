@@ -1,5 +1,3 @@
-// src/types.ts
-
 export interface Film {
   title: string;
   planets: string[]; 
@@ -8,6 +6,7 @@ export interface Film {
 
 export interface Resident {
   name: string;
+  url: string;
 }
 
 
@@ -23,7 +22,7 @@ export interface Planet {
   surface_water?: string; 
   population?: string; 
   residents?: Resident[];
-  residentUrls: string[];  
+  residentUrls?: string[];  
   films?: Film[]; 
   created?: string; 
   edited?: string; 

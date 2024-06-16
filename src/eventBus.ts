@@ -2,11 +2,9 @@ import mitt, { Emitter, Handler } from 'mitt';
 import { Planet } from '@/types';
 
 type CustomEventTypes = {
-  planetSelected: Planet; // Define your specific event types here
-  // Add more event types as needed
+  planetSelected: Planet; 
 };
 
-// Create a strongly typed event bus
 const emitter: Emitter<CustomEventTypes> = mitt<CustomEventTypes>();
 
 export const eventBus = {
