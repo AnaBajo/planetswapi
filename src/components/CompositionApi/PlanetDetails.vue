@@ -1,5 +1,4 @@
 <template>
-  <p>COMPOSITION</p>
   <div
     v-if="selectedPlanet"
     class="flex items-center justify-center my-6 mx-auto"

@@ -1,7 +1,7 @@
 <template>
   <div>
     <planets-list
-      :planets="PlanetsWithAllData"
+      :planets="planetsWithAllData"
       :fetchNextPage="fetchNextPage"
       :planetsUrl="planetsUrl"
       :loading="loading"
@@ -28,7 +28,6 @@ export default defineComponent({
   name: "PlanetsManager",
   components: {
     PlanetsList,
-    // PlanetDetails,
   },
   data() {
     return {
@@ -37,8 +36,16 @@ export default defineComponent({
       planets: [] as Planet[],
       films: [] as Film[],
       residents: [] as Resident[],
-      PlanetsWithAllData: [] as PlanetsArray,
+      planetsWithAllData: [] as PlanetsArray,
+      planetsUrlChanged: false
     };
+  },
+  watch: {
+    planetsUrl(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.planetsUrlChanged = true;
+      }
+    },
   },
   mounted() {
     this.fetchData();
@@ -96,7 +103,7 @@ export default defineComponent({
 
         const residents = await this.fetchResidents(residentsUrl);
 
-        const planetsWithAllData = this.planets.map((planet, index) => {
+        const planetsFullData = this.planets.map((planet, index) => {
           const associatedFilms = this.films
             .filter((film) => film.planets.includes(planet.url))
             .map((film) => ({
@@ -133,18 +140,24 @@ export default defineComponent({
           } as Planet;
         });
 
-        this.PlanetsWithAllData = planetsWithAllData;
+        this.planetsWithAllData = planetsFullData;
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         this.loading = false;
       }
     },
+    // fetchNextPage() {
+    //   if (this.planetsUrl) {
+    //     this.fetchData();
+    //   }
+    // },
     fetchNextPage() {
-      if (this.planetsUrl) {
+      if (this.planetsUrlChanged) {
         this.fetchData();
       }
     },
+    
     showPlanetDetails(planet: Planet) {
       this.selectedPlanet = planet;
     },

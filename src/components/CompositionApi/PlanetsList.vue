@@ -1,5 +1,4 @@
 <template>
-    <h2>setup/planetsList</h2>
   <div class="container mx-auto flex items-center justify-center my-6">
     <div>
       <table class="text-left table-auto border border-yellow-400">

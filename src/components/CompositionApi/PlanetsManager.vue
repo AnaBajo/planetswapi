@@ -1,13 +1,11 @@
 <template>
-  <h1>setup()</h1>
   <div>
     <planets-list
-      :planets="newPlanets"
+      :planets="currentPlanetsList"
       :fetchNextPage="fetchNextPage"
       :planetsUrl="planetsUrl"
       :loading="loading"
     />
-    <planet-details ref="planetDetailsRef" />
   </div>
 </template>
 
@@ -21,11 +19,9 @@ import {
   reactive,
 } from "vue";
 import PlanetsList from "@/components/CompositionApi/PlanetsList.vue";
-import PlanetDetails from "@/components/CompositionApi/PlanetDetails.vue";
 import {
   Planet,
   Film,
-  // PlanetsArray,
   Resident,
   PlanetDetailsComponent,
 } from "@/types";
@@ -37,7 +33,6 @@ export default defineComponent({
   name: "PlanetsManager",
   components: {
     PlanetsList,
-    PlanetDetails,
   },
   setup() {
     const planetsUrl = ref("https://swapi.dev/api/planets/");
@@ -45,12 +40,12 @@ export default defineComponent({
     const planets = ref<Planet[]>([]);
     const films = ref<Film[]>([]);
     const residents = ref<Resident[]>([]);
-    //   const PlanetsWithAllData = ref<PlanetsArray>([]);
-    const PlanetsWithAllData = ref<Planet[]>([]);
+    //   const planetsWithAllData = ref<PlanetsArray>([]);
+    const planetsWithAllData = ref<Planet[]>([]);
     const planetDetailsRef = ref(null);
     const planetsUrlChanged = ref(false);
-    //   const newPlanets = ref<PlanetsArray>([]);
-    const newPlanets = reactive<Planet[]>([]);
+    //   const currentPlanetsList = ref<PlanetsArray>([]);
+    const currentPlanetsList = reactive<Planet[]>([]);
 
     const selectedPlanet = computed(() => {
       return planetDetailsRef.value
@@ -104,7 +99,7 @@ export default defineComponent({
         await fetchFilms(filmsUrl);
         const fetchedResidents = await fetchResidents(residentsUrl);
 
-        const planetsWithAllData = planets.value.map((planet, index) => {
+        const planetsFullData = planets.value.map((planet, index) => {
           const associatedFilms = films.value
             .filter((film) => film.planets.includes(planet.url))
             .map((film) => ({
@@ -141,8 +136,8 @@ export default defineComponent({
           } as Planet;
         });
 
-        PlanetsWithAllData.value = planetsWithAllData;
-        newPlanets.splice(0, newPlanets.length, ...planetsWithAllData);
+        planetsWithAllData.value = planetsFullData;
+        currentPlanetsList.splice(0, currentPlanetsList.length, ...planetsFullData);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -176,12 +171,12 @@ export default defineComponent({
       planets,
       films,
       residents,
-      PlanetsWithAllData,
+      planetsWithAllData,
       selectedPlanet,
       fetchNextPage,
       showPlanetDetails,
       planetDetailsRef,
-      newPlanets,
+      currentPlanetsList,
     };
   },
 });
