@@ -30,7 +30,6 @@ const filmsUrl = "https://swapi.dev/api/films/";
 const residentsUrl = "https://swapi.dev/api/people/";
 
 export default defineComponent({
-  name: "PlanetsManager",
   components: {
     PlanetsList,
   },

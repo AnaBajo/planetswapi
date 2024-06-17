@@ -25,7 +25,6 @@ const filmsUrl = "https://swapi.dev/api/films/";
 const residentsUrl = "https://swapi.dev/api/people/";
 
 export default defineComponent({
-  name: "PlanetsManager",
   components: {
     PlanetsList,
   },
@@ -37,7 +36,7 @@ export default defineComponent({
       films: [] as Film[],
       residents: [] as Resident[],
       planetsWithAllData: [] as PlanetsArray,
-      planetsUrlChanged: false
+      planetsUrlChanged: false,
     };
   },
   watch: {
@@ -68,6 +67,7 @@ export default defineComponent({
         }));
         this.planets = [...this.planets, ...planets];
         this.planetsUrl = planetsData.next;
+        console.log(planets);
       } catch (error) {
         console.error("Error fetching planets:", error);
       }
@@ -147,17 +147,11 @@ export default defineComponent({
         this.loading = false;
       }
     },
-    // fetchNextPage() {
-    //   if (this.planetsUrl) {
-    //     this.fetchData();
-    //   }
-    // },
     fetchNextPage() {
       if (this.planetsUrlChanged) {
         this.fetchData();
       }
     },
-    
     showPlanetDetails(planet: Planet) {
       this.selectedPlanet = planet;
     },

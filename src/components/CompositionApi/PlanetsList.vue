@@ -55,7 +55,6 @@ import { PlanetsArray, Planet } from "@/types";
 import { eventBus } from "@/eventBus";
 
 export default defineComponent({
-  name: "PlanetsTable",
   props: {
     planets: {
       type: Array as PropType<PlanetsArray>,

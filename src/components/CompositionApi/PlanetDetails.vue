@@ -63,7 +63,6 @@ import { Planet } from "@/types";
 import { eventBus } from "@/eventBus";
 
 export default defineComponent({
-  name: "PlanetDetails",
   setup() {
     const selectedPlanet = ref<Planet | null>(null);
 
