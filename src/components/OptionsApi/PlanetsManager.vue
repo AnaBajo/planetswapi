@@ -9,11 +9,17 @@
     <planet-details />
   </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from "vue";
-import PlanetsList from "@/components/PlanetsList.vue";
-import PlanetDetails from "@/components/PlanetDetails.vue";
-import { Planet, Film, PlanetsArray, Resident } from "@/types";
+import PlanetsList from "@/components/OptionsApi/PlanetsList.vue";
+import {
+  Planet,
+  Film,
+  PlanetsArray,
+  Resident,
+  PlanetDetailsComponent,
+} from "@/types";
 
 const filmsUrl = "https://swapi.dev/api/films/";
 const residentsUrl = "https://swapi.dev/api/people/";
@@ -22,7 +28,7 @@ export default defineComponent({
   name: "PlanetsManager",
   components: {
     PlanetsList,
-    PlanetDetails,
+    // PlanetDetails,
   },
   data() {
     return {
@@ -40,7 +46,7 @@ export default defineComponent({
   computed: {
     selectedPlanet(): Planet | null {
       return this.$refs.planetDetails
-        ? (this.$refs.planetDetails as any).selectedPlanet
+        ? (this.$refs.planetDetails as PlanetDetailsComponent).selectedPlanet
         : null;
     },
   },
@@ -49,7 +55,7 @@ export default defineComponent({
       try {
         const response = await fetch(url);
         const planetsData = await response.json();
-        const planets = planetsData.results.map((planet: any) => ({
+        const planets = planetsData.results.map((planet: Planet) => ({
           ...planet,
           residentUrls: planet.residents,
         }));
@@ -78,7 +84,7 @@ export default defineComponent({
         }));
       } catch (error) {
         console.error("Error fetching residents:", error);
-        return []; 
+        return [];
       }
     },
     async fetchData() {
@@ -97,8 +103,10 @@ export default defineComponent({
               title: film.title,
             }));
 
-            const associatedResidents = residents
-            .filter((resident: Resident) => planet.residentUrls?.includes(resident.url))
+          const associatedResidents = residents
+            .filter((resident: Resident) =>
+              planet.residentUrls?.includes(resident.url)
+            )
             .map((resident: Resident) => ({
               name: resident.name,
             }));
@@ -138,13 +146,7 @@ export default defineComponent({
       }
     },
     showPlanetDetails(planet: Planet) {
-      console.log("PlanetsManager/shoqPlanetDetails()/planet", planet);
       this.selectedPlanet = planet;
-      console.log(
-        "PlanetsManager/shoqPlanetDetails()/this.selectedPlanet",
-        this.selectedPlanet
-      );
-      console.log("typeof planet", typeof planet);
     },
   },
 });

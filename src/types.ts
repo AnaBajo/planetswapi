@@ -30,3 +30,8 @@ export interface Planet {
 }
 
 export type PlanetsArray = Planet[];
+
+export interface PlanetDetailsComponent {
+  selectedPlanet: Planet | null;
+}
+

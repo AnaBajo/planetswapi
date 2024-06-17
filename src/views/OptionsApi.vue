@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import PlanetsManager from "@/components/PlanetsManager.vue";
+import PlanetsManager from "@/components/OptionsApi/PlanetsManager.vue";
 
 export default defineComponent({
   name: "OptionsApi",

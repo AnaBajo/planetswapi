@@ -1,7 +1,8 @@
 <template>
+  <p>COMPOSITION</p>
   <div
     v-if="selectedPlanet"
-    class=" flex items-center justify-center my-6 mx-auto"
+    class="flex items-center justify-center my-6 mx-auto"
   >
     <div class="max-w-xs md:max-w-screen-lg">
       <table class="text-left align-top table-auto border border-yellow-400">
@@ -40,7 +41,6 @@
               <div v-else-if="key === 'created' || key === 'edited'">
                 {{ formatDate(value as string) }}
               </div>
-              
               <div v-else :class="{ 'text-xs': key === 'url' }">
                 {{ value }}
               </div>
@@ -57,39 +57,44 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { Planet } from "@/types";
 import { eventBus } from "@/eventBus";
 
 export default defineComponent({
-  data() {
-    return {
-      selectedPlanet: null as Planet | null,
-    };
-  },
-  mounted() {
-    eventBus.on("planetSelected", (planet: Planet) => {
-      this.selectedPlanet = planet;
+  name: "PlanetDetails",
+  setup() {
+    const selectedPlanet = ref<Planet | null>(null);
+
+    onMounted(() => {
+      eventBus.on("planetSelected", (planet: Planet) => {
+        selectedPlanet.value = planet;
+      });
     });
-    console.log(
-      "PlanetDetails/mounted()/this.planetSelected",
-      this.selectedPlanet
-    );
-  },
-  methods: {
-    formatDate(value: string) {
+
+    const formatDate = (value: string) => {
       return new Intl.DateTimeFormat("en-US").format(new Date(value));
-    },
-    capitalizeKey(key: string) {
+    };
+
+    const capitalizeKey = (key: string) => {
       return key
         .split("_")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
-    },
-    goBack() {
-      this.$router.go(-1);
-    },
+    };
+
+    const goBack = () => {
+      window.history.back();
+    };
+
+    return {
+      selectedPlanet,
+      formatDate,
+      capitalizeKey,
+      goBack,
+    };
   },
 });
 </script>

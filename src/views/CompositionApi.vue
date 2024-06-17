@@ -1,16 +1,17 @@
 <template>
   <div>
-    composition API components
+    <planets-manager />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
+import PlanetsManager from "@/components/CompositionApi/PlanetsManager.vue";
 
 export default defineComponent({
-  name: 'CompositionApi',
+  name: "OptionsApi",
   components: {
-
+    PlanetsManager,
   },
 });
 </script>
