@@ -17,14 +17,12 @@ const routes: Array<RouteRecordRaw> = [
     component: CompositionApiVue
   },
   {
-    // path: '/planet/:name',
     path: '/options/planet/:id',
     name: 'planet-details',
     component: PlanetDetailsVue,
     props: true
   },
   {
-    // path: '/planet/:name',
     path: '/composition/planet/:id',
     name: 'composition-planet-details',
     component: CompPlanetDetailsVue,

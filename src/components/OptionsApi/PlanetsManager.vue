@@ -67,7 +67,6 @@ export default defineComponent({
         }));
         this.planets = [...this.planets, ...planets];
         this.planetsUrl = planetsData.next;
-        console.log(planets);
       } catch (error) {
         console.error("Error fetching planets:", error);
       }
@@ -83,9 +82,17 @@ export default defineComponent({
     },
     async fetchResidents(url: string) {
       try {
-        const response = await fetch(url);
-        const residentsData = await response.json();
-        return residentsData.results.map((resident: Resident) => ({
+        let allResidents: Resident[] = [];
+        let nextPageUrl: string | null = url;
+
+        while (nextPageUrl) {
+          const response: Response = await fetch(nextPageUrl); 
+          const residentsData = await response.json();
+          allResidents = [...allResidents, ...residentsData.results];
+          nextPageUrl = residentsData.next;
+        }
+
+        return allResidents.map((resident: Resident) => ({
           name: resident.name,
           url: resident.url,
         }));
@@ -99,9 +106,7 @@ export default defineComponent({
         this.loading = true;
         await this.fetchPlanets(this.planetsUrl);
         await this.fetchFilms(filmsUrl);
-        await this.fetchResidents(residentsUrl);
-
-        const residents = await this.fetchResidents(residentsUrl);
+        this.residents = await this.fetchResidents(residentsUrl);
 
         const planetsFullData = this.planets.map((planet, index) => {
           const associatedFilms = this.films
@@ -110,12 +115,11 @@ export default defineComponent({
               title: film.title,
             }));
 
-          const associatedResidents = residents
-            .filter((resident: Resident) =>
-              planet.residentUrls?.includes(resident.url)
-            )
-            .map((resident: Resident) => ({
+          const associatedResidents = this.residents
+            .filter((resident) => planet.residentUrls?.includes(resident.url))
+            .map((resident) => ({
               name: resident.name,
+              url: resident.url
             }));
 
           return {
@@ -139,7 +143,6 @@ export default defineComponent({
             url: planet.url,
           } as Planet;
         });
-
         this.planetsWithAllData = planetsFullData;
       } catch (error) {
         console.error("Error fetching data:", error);

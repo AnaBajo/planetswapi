@@ -19,12 +19,7 @@ import {
   reactive,
 } from "vue";
 import PlanetsList from "@/components/CompositionApi/PlanetsList.vue";
-import {
-  Planet,
-  Film,
-  Resident,
-  PlanetDetailsComponent,
-} from "@/types";
+import { Planet, Film, Resident, PlanetDetailsComponent } from "@/types";
 
 const filmsUrl = "https://swapi.dev/api/films/";
 const residentsUrl = "https://swapi.dev/api/people/";
@@ -39,11 +34,9 @@ export default defineComponent({
     const planets = ref<Planet[]>([]);
     const films = ref<Film[]>([]);
     const residents = ref<Resident[]>([]);
-    //   const planetsWithAllData = ref<PlanetsArray>([]);
     const planetsWithAllData = ref<Planet[]>([]);
     const planetDetailsRef = ref(null);
     const planetsUrlChanged = ref(false);
-    //   const currentPlanetsList = ref<PlanetsArray>([]);
     const currentPlanetsList = reactive<Planet[]>([]);
 
     const selectedPlanet = computed(() => {
@@ -79,9 +72,17 @@ export default defineComponent({
 
     const fetchResidents = async (url: string) => {
       try {
-        const response = await fetch(url);
-        const residentsData = await response.json();
-        return residentsData.results.map((resident: Resident) => ({
+        let allResidents: Resident[] = [];
+        let nextPageUrl: string | null = url;
+
+        while (nextPageUrl) {
+          const response: Response = await fetch(nextPageUrl);
+          const residentsData = await response.json();
+          allResidents = [...allResidents, ...residentsData.results];
+          nextPageUrl = residentsData.next;
+        }
+
+        return allResidents.map((resident: Resident) => ({
           name: resident.name,
           url: resident.url,
         }));
@@ -136,7 +137,11 @@ export default defineComponent({
         });
 
         planetsWithAllData.value = planetsFullData;
-        currentPlanetsList.splice(0, currentPlanetsList.length, ...planetsFullData);
+        currentPlanetsList.splice(
+          0,
+          currentPlanetsList.length,
+          ...planetsFullData
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
